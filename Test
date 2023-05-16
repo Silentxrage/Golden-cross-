@@ -1,0 +1,23 @@
+import yfinance as yf
+import pandas as pd
+
+def find_golden_cross(symbol):
+    # Download historical data
+    data = yf.download(symbol, start='2022-01-01', end='2023-05-16')
+
+    # Calculate 50-day and 200-day EMA
+    data['EMA_50'] = data['Close'].ewm(span=50, adjust=False).mean()
+    data['EMA_200'] = data['Close'].ewm(span=200, adjust=False).mean()
+
+    # Check for golden cross
+    golden_cross = data[data['EMA_50'] > data['EMA_200']].dropna()
+
+    if len(golden_cross) > 0:
+        print(f"{symbol} has a golden cross on the following dates:")
+        print(golden_cross.index)
+    else:
+        print(f"{symbol} does not have a golden cross.")
+
+# Example usage
+find_golden_cross('BTC-USD')
+find_golden_cross('ETH-USD')
